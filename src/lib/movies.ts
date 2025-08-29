@@ -34,17 +34,26 @@ const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
   },
 };
 
 async function fetchFromTMDB(url: string, params: Record<string, string> = {}) {
-  const
- 
-searchParams = new URLSearchParams(params);
+  const searchParams = new URLSearchParams({
+    ...params,
+    api_key: API_KEY || '',
+  });
+  
   const response = await fetch(`${API_BASE_URL}${url}?${searchParams.toString()}`, options);
+
   if (!response.ok) {
-    throw new Error(`Failed to fetch from TMDB: ${response.statusText}`);
+    let errorDetails = response.statusText;
+    try {
+        const errorBody = await response.json();
+        errorDetails = errorBody.status_message || errorDetails;
+    } catch (e) {
+        // Ignore if response is not json
+    }
+    throw new Error(`Failed to fetch from TMDB: ${errorDetails}`);
   }
   return response.json();
 }
