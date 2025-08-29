@@ -2,10 +2,8 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getMovieDetails } from '@/lib/movies';
 import { Badge } from '@/components/ui/badge';
-import { Star, Users, Calendar, Film } from 'lucide-react';
-import VideoPlayer from '@/components/VideoPlayer';
+import { Star, Users, Calendar } from 'lucide-react';
 import TrailerSummary from '@/components/TrailerSummary';
-import { Separator } from '@/components/ui/separator';
 
 export default async function MovieDetailsPage({ params }: { params: { id: string } }) {
   const movie = await getMovieDetails(params.id);
@@ -19,9 +17,6 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
 
   const trailer = movie.videos.results.find(video => video.site === 'YouTube' && video.type === 'Trailer');
   const trailerUrl = trailer ? `https://www.youtube.com/embed/${trailer.key}` : '';
-
-  // A dummy movie url. In a real app this would come from a streaming provider.
-  const movieUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
   return (
     <>
@@ -58,13 +53,6 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
             <div>
               <h2 className="text-2xl font-bold mb-3">Description</h2>
               <p className="text-muted-foreground text-lg leading-relaxed">{movie.overview}</p>
-            </div>
-            
-            <Separator />
-
-            <div>
-              <h2 className="text-3xl font-bold mb-6">Watch Movie</h2>
-              <VideoPlayer src={movieUrl} />
             </div>
           </div>
           <div className="lg:col-span-1 space-y-8">
