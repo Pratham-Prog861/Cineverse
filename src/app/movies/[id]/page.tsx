@@ -4,6 +4,7 @@ import { getMovieDetails } from '@/lib/movies';
 import { Badge } from '@/components/ui/badge';
 import { Star, Users, Calendar } from 'lucide-react';
 import TrailerSummary from '@/components/TrailerSummary';
+import VideoPlayer from '@/components/VideoPlayer';
 
 export default async function MovieDetailsPage({ params }: { params: { id: string } }) {
   const movie = await getMovieDetails(params.id);
@@ -17,6 +18,7 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
 
   const trailer = movie.videos.results.find(video => video.site === 'YouTube' && video.type === 'Trailer');
   const trailerUrl = trailer ? `https://www.youtube.com/embed/${trailer.key}` : '';
+  const movieStreamUrl = `https://vidsrc.to/embed/movie/${params.id}`;
 
   return (
     <>
@@ -50,6 +52,10 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
       <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
           <div className="lg:col-span-2 space-y-8">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Watch Movie</h2>
+              <VideoPlayer src={movieStreamUrl} />
+            </div>
             <div>
               <h2 className="text-2xl font-bold mb-3">Description</h2>
               <p className="text-muted-foreground text-lg leading-relaxed">{movie.overview}</p>
