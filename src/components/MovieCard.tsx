@@ -16,6 +16,8 @@ export function MovieCard({ movie, genres }: MovieCardProps) {
     : 'https://picsum.photos/400/600';
 
   const movieGenres = movie.genre_ids.map(id => genres.find(g => g.id === id)?.name).filter(Boolean);
+  
+  const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : null;
 
   return (
     <Link href={`/movies/${movie.id}`} className="group">
@@ -36,7 +38,7 @@ export function MovieCard({ movie, genres }: MovieCardProps) {
               {movie.title}
             </h3>
             <div className="flex justify-between items-center text-sm text-muted-foreground">
-              <span>{new Date(movie.release_date).getFullYear()}</span>
+              <span>{releaseYear || 'N/A'}</span>
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                 <span className="font-semibold">{movie.vote_average.toFixed(1)}</span>
