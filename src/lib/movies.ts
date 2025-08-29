@@ -2,215 +2,86 @@ export type Movie = {
   id: number;
   title: string;
   description: string;
-  posterUrl: string;
-  posterAiHint: string;
-  releaseYear: number;
-  rating: number;
-  genre: string[];
-  cast: string[];
-  trailerUrl: string;
-  movieUrl: string;
+  poster_path: string | null;
+  release_date: string;
+  vote_average: number;
+  genre_ids: number[];
+  adult: boolean;
+  backdrop_path: string | null;
+  overview: string;
+  genres: { id: number; name: string }[];
+  credits: {
+    cast: { name: string }[];
+  };
+  videos: {
+    results: {
+      key: string;
+      site: string;
+      type: string;
+    }[];
+  };
 };
 
-export const movies: Movie[] = [
-  {
-    id: 1,
-    title: 'Cosmic Odyssey',
-    description:
-      'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.',
-    posterUrl: 'https://picsum.photos/400/600?random=1',
-    posterAiHint: 'space galaxy',
-    releaseYear: 2014,
-    rating: 8.6,
-    genre: ['Sci-Fi', 'Adventure', 'Drama'],
-    cast: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
-    trailerUrl: 'https://www.youtube.com/embed/zSWdZVtXT7E',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+export type Genre = {
+  id: number;
+  name: string;
+};
+
+const API_KEY = process.env.TMDB_API_KEY;
+const API_BASE_URL = 'https://api.themoviedb.org/3';
+
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
   },
-  {
-    id: 2,
-    title: 'The Silent Thief',
-    description:
-      'A skilled thief has a change of heart when he falls for the daughter of his latest target.',
-    posterUrl: 'https://picsum.photos/400/600?random=2',
-    posterAiHint: 'night city',
-    releaseYear: 2022,
-    rating: 7.8,
-    genre: ['Crime', 'Thriller', 'Romance'],
-    cast: ['Ryan Reynolds', 'Zoe Saldana', 'Ben Kingsley'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  },
-  {
-    id: 3,
-    title: 'Echoes of the Past',
-    description:
-      'A historian discovers a diary that transports her back to the 19th century, where she must navigate a world of political intrigue and forbidden love.',
-    posterUrl: 'https://picsum.photos/400/600?random=3',
-    posterAiHint: 'vintage letter',
-    releaseYear: 2020,
-    rating: 8.1,
-    genre: ['Fantasy', 'Romance', 'History'],
-    cast: ['Emilia Clarke', 'Sam Heughan', 'Charles Dance'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-  },
-  {
-    id: 4,
-    title: 'Cybernetic Revolt',
-    description:
-      'In a futuristic city, a detective hunts down a rogue android that has developed self-awareness and is leading a rebellion.',
-    posterUrl: 'https://picsum.photos/400/600?random=4',
-    posterAiHint: 'futuristic robot',
-    releaseYear: 2024,
-    rating: 9.2,
-    genre: ['Action', 'Sci-Fi', 'Thriller'],
-    cast: ['Keanu Reeves', 'Carrie-Anne Moss', 'Laurence Fishburne'],
-    trailerUrl: 'https://www.youtube.com/embed/vKQi3bBA1y8',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-  },
-  {
-    id: 5,
-    title: 'Beneath the Waves',
-    description: 'A marine biologist on a deep-sea expedition discovers a previously unknown species and a hidden underwater civilization.',
-    posterUrl: 'https://picsum.photos/400/600?random=5',
-    posterAiHint: 'underwater ocean',
-    releaseYear: 2019,
-    rating: 7.5,
-    genre: ['Adventure', 'Mystery', 'Sci-Fi'],
-    cast: ['Jason Statham', 'Li Bingbing', 'Rainn Wilson'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-  },
-  {
-    id: 6,
-    title: 'The Last Stand',
-    description: 'A small town sheriff and his deputies must defend their home from a cartel leader and his army of mercenaries.',
-    posterUrl: 'https://picsum.photos/400/600?random=6',
-    posterAiHint: 'desert town',
-    releaseYear: 2013,
-    rating: 6.3,
-    genre: ['Action', 'Crime'],
-    cast: ['Arnold Schwarzenegger', 'Forest Whitaker', 'Johnny Knoxville'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-  },
-  {
-    id: 7,
-    title: 'A Journey Within',
-    description:
-      'A burnt-out executive embarks on a spiritual journey to the Himalayas, finding more than just peace of mind.',
-    posterUrl: 'https://picsum.photos/400/600?random=7',
-    posterAiHint: 'mountain landscape',
-    releaseYear: 2018,
-    rating: 8.9,
-    genre: ['Drama', 'Adventure', 'Comedy'],
-    cast: ['Julia Roberts', 'Richard Jenkins', 'Javier Bardem'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-  },
-  {
-    id: 8,
-    title: 'Zero Hour',
-    description: 'A team of elite soldiers are sent on a mission to stop a global terrorist organization from launching a deadly weapon.',
-    posterUrl: 'https://picsum.photos/400/600?random=8',
-    posterAiHint: 'soldier silhouette',
-    releaseYear: 2023,
-    rating: 7.1,
-    genre: ['Action', 'Thriller', 'War'],
-    cast: ['Chris Hemsworth', 'Idris Elba', 'Olga Kurylenko'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-  },
-  {
-    id: 9,
-    title: 'The Alchemist\'s Secret',
-    description: 'A young apprentice uncovers his master\'s dark secret, a powerful artifact that could change the world forever.',
-    posterUrl: 'https://picsum.photos/400/600?random=9',
-    posterAiHint: 'fantasy potion',
-    releaseYear: 2017,
-    rating: 8.3,
-    genre: ['Fantasy', 'Adventure', 'Family'],
-    cast: ['Tom Holland', 'Zendaya', 'Jake Gyllenhaal'],
-    trailerUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-  },
-  {
-    id: 10,
-    title: 'City of Laughs',
-    description: 'A struggling stand-up comedian gets his big break, but finds that fame comes with a price.',
-    posterUrl: 'https://picsum.photos/400/600?random=10',
-    posterAiHint: 'microphone stage',
-    releaseYear: 2019,
-    rating: 9.0,
-    genre: ['Comedy', 'Drama'],
-    cast: ['Joaquin Phoenix', 'Robert De Niro', 'Zazie Beetz'],
-    trailerUrl: 'https://www.youtube.com/embed/zAGVQLHvwOY',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-  },
-  {
-    id: 11,
-    title: 'RRR',
-    description: 'A fictitious story about two legendary revolutionaries and their journey away from home before they started fighting for their country in the 1920s.',
-    posterUrl: 'https://picsum.photos/400/600?random=11',
-    posterAiHint: 'historic freedom',
-    releaseYear: 2022,
-    rating: 7.8,
-    genre: ['Action', 'Drama', 'History'],
-    cast: ['N. T. Rama Rao Jr.', 'Ram Charan', 'Alia Bhatt'],
-    trailerUrl: 'https://www.youtube.com/embed/GY4BgdUSpbE',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
-  },
-  {
-    id: 12,
-    title: '3 Idiots',
-    description: 'Two friends are searching for their long lost companion. They revisit their college days and recall the memories of their friend who inspired them to think differently, even as the rest of the world called them "idiots".',
-    posterUrl: 'https://picsum.photos/400/600?random=12',
-    posterAiHint: 'college friends',
-    releaseYear: 2009,
-    rating: 8.4,
-    genre: ['Comedy', 'Drama'],
-    cast: ['Aamir Khan', 'R. Madhavan', 'Sharman Joshi'],
-    trailerUrl: 'https://www.youtube.com/embed/K0e-w_I__ic',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-  },
-  {
-    id: 13,
-    title: 'Baahubali: The Beginning',
-    description: 'In ancient India, an adventurous and daring man becomes involved in a decades-old feud between two warring peoples.',
-    posterUrl: 'https://picsum.photos/400/600?random=13',
-    posterAiHint: 'ancient kingdom',
-    releaseYear: 2015,
-    rating: 8.0,
-    genre: ['Action', 'Drama', 'Fantasy'],
-    cast: ['Prabhas', 'Rana Daggubati', 'Anushka Shetty'],
-    trailerUrl: 'https://www.youtube.com/embed/sOEg_zT0c_E',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-  },
-  {
-    id: 14,
-    title: 'Dangal',
-    description: 'Former wrestler Mahavir Singh Phogat and his two wrestler daughters struggle towards glory at the Commonwealth Games in the face of societal oppression.',
-    posterUrl: 'https://picsum.photos/400/600?random=14',
-    posterAiHint: 'wrestling match',
-    releaseYear: 2016,
-    rating: 8.3,
-    genre: ['Action', 'Biography', 'Drama'],
-    cast: ['Aamir Khan', 'Sakshi Tanwar', 'Fatima Sana Shaikh'],
-    trailerUrl: 'https://www.youtube.com/embed/x_7YlGv9u1g',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-  },
-  {
-    id: 15,
-    title: 'K.G.F: Chapter 1',
-    description: 'In the 1970s, a fierce rebel rises against oppressive overlords in a brutal gold mine, becoming a symbol of hope to the downtrodden.',
-    posterUrl: 'https://picsum.photos/400/600?random=15',
-    posterAiHint: 'gold mine',
-    releaseYear: 2018,
-    rating: 8.2,
-    genre: ['Action', 'Crime', 'Drama'],
-    cast: ['Yash', 'Srinidhi Shetty', 'Ramachandra Raju'],
-    trailerUrl: 'https://www.youtube.com/embed/qXyz_s9aa_c',
-    movieUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
+};
+
+async function fetchFromTMDB(url: string, params: Record<string, string> = {}) {
+  const
+ 
+searchParams = new URLSearchParams(params);
+  const response = await fetch(`${API_BASE_URL}${url}?${searchParams.toString()}`, options);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch from TMDB: ${response.statusText}`);
   }
-];
+  return response.json();
+}
+
+export async function getPopularMovies() {
+  const data = await fetchFromTMDB('/movie/popular', { language: 'en-US', page: '1' });
+  return data.results as Movie[];
+}
+
+export async function searchMovies(query: string, genre: string, year: string, rating: string) {
+  let movies;
+  if (query) {
+    const data = await fetchFromTMDB('/search/movie', { query, language: 'en-US', page: '1', include_adult: 'false' });
+    movies = data.results;
+  } else {
+    const params: Record<string,string> = {
+      language: 'en-US',
+      page: '1',
+      sort_by: 'popularity.desc',
+      include_adult: 'false',
+    }
+    if (year && year !== 'all') params.primary_release_year = year;
+    if (rating && rating !== 'all') params['vote_average.gte'] = rating;
+    if (genre && genre !== 'all') params.with_genres = genre;
+
+    const data = await fetchFromTMDB('/discover/movie', params);
+    movies = data.results;
+  }
+  return movies as Movie[];
+}
+
+
+export async function getMovieDetails(id: string): Promise<Movie> {
+  return fetchFromTMDB(`/movie/${id}`, { append_to_response: 'videos,credits' });
+}
+
+export async function getGenres(): Promise<Genre[]> {
+    const data = await fetchFromTMDB('/genre/movie/list', { language: 'en' });
+    return data.genres;
+}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from 'react';
-import { movies } from '@/lib/movies';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { searchMovies, getGenres } from '@/lib/movies';
 import { MovieCard } from '@/components/MovieCard';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,42 +13,64 @@ import {
 } from '@/components/ui/select';
 import { Search } from 'lucide-react';
 import { Label } from './ui/label';
+import type { Movie, Genre } from '@/lib/movies';
+import { useDebounce } from 'use-debounce';
 
 export default function MovieList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [genre, setGenre] = useState('all');
   const [year, setYear] = useState('all');
   const [rating, setRating] = useState('all');
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const genres = useMemo(
-    () => [
-      'all',
-      ...Array.from(new Set(movies.flatMap((m) => m.genre))).sort(),
-    ],
-    []
-  );
-  const years = useMemo(
-    () => [
-      'all',
-      ...Array.from(new Set(movies.map((m) => m.releaseYear.toString()))).sort(
-        (a, b) => parseInt(b) - parseInt(a)
-      ),
-    ],
-    []
-  );
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
-  const filteredMovies = useMemo(() => {
-    return movies.filter((movie) => {
-      const matchesSearch =
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.cast.some(actor => actor.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesGenre = genre === 'all' || movie.genre.includes(genre);
-      const matchesYear = year === 'all' || movie.releaseYear.toString() === year;
-      const matchesRating =
-        rating === 'all' || movie.rating >= parseInt(rating);
-      return matchesSearch && matchesGenre && matchesYear && matchesRating;
-    });
-  }, [searchTerm, genre, year, rating]);
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const years = ['all'];
+    for (let y = currentYear; y >= 1980; y--) {
+      years.push(y.toString());
+    }
+    return years;
+  }, []);
+  
+  useEffect(() => {
+    async function fetchInitialData() {
+        setIsLoading(true);
+        try {
+            const [moviesData, genresData] = await Promise.all([
+                searchMovies('', 'all', 'all', 'all'),
+                getGenres()
+            ]);
+            setMovies(moviesData);
+            setGenres(genresData);
+        } catch (error) {
+            console.error("Failed to fetch initial data", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    fetchInitialData();
+  }, []);
+
+  const fetchMovies = useCallback(async () => {
+    setIsLoading(true);
+    try {
+        const moviesData = await searchMovies(debouncedSearchTerm, genre, year, rating);
+        setMovies(moviesData);
+    } catch (error) {
+        console.error("Failed to search movies", error);
+    } finally {
+        setIsLoading(false);
+    }
+  }, [debouncedSearchTerm, genre, year, rating]);
+
+  useEffect(() => {
+    fetchMovies();
+  }, [fetchMovies]);
+
 
   return (
     <div>
@@ -58,7 +80,7 @@ export default function MovieList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             id="search-movie"
-            placeholder="Search movie or cast..."
+            placeholder="Search movie..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -71,9 +93,10 @@ export default function MovieList() {
               <SelectValue placeholder="Filter by Genre" />
             </SelectTrigger>
             <SelectContent>
+                <SelectItem value="all">All Genres</SelectItem>
               {genres.map((g) => (
-                <SelectItem key={g} value={g}>
-                  {g === 'all' ? 'All Genres' : g}
+                <SelectItem key={g.id} value={g.id.toString()}>
+                  {g.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -110,10 +133,20 @@ export default function MovieList() {
           </Select>
         </div>
       </div>
-      {filteredMovies.length > 0 ? (
+      {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredMovies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                    <div className="aspect-[2/3] bg-muted rounded-lg animate-pulse"></div>
+                    <div className="h-5 bg-muted rounded w-3/4 animate-pulse"></div>
+                    <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                </div>
+            ))}
+        </div>
+      ) : movies.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} genres={genres} />
           ))}
         </div>
       ) : (
