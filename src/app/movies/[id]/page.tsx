@@ -68,8 +68,10 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
               </ul>
             </div>
             
-            {trailerUrl && <TrailerSummary trailerUrl={trailerUrl} />}
           </div>
+        </div>
+        <div className="mt-8">
+          {trailerUrl && <TrailerSummary trailerUrl={trailerUrl} />}
         </div>
       </div>
     </>

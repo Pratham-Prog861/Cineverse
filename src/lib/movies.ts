@@ -9,6 +9,7 @@ export type Movie = {
   adult: boolean;
   backdrop_path: string | null;
   overview: string;
+  runtime?: number;
   genres: { id: number; name: string }[];
   credits: {
     cast: { name: string }[];

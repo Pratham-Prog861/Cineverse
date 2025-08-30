@@ -32,7 +32,7 @@ export default function TrailerSummary({ trailerUrl }: { trailerUrl: string }) {
     return (
         <Card className="bg-background/50 border-secondary">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                <CardTitle className="flex items-center gap-2 text-center justify-center text-3xl font-bold">
                     <Film className="w-6 h-6" /> Trailer
                 </CardTitle>
             </CardHeader>
