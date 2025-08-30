@@ -36,7 +36,7 @@ export function Header() {
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Clapperboard className="h-6 w-6 text-primary" />
           <span className="hidden font-bold sm:inline-block">
-            StreamVerse
+            Cineverse
           </span>
         </Link>
         
@@ -60,7 +60,7 @@ export function Header() {
             <SheetContent side="right" className="pr-0 pt-10">
                <Link href="/" className="flex items-center space-x-2 mb-6 pl-6">
                  <Clapperboard className="h-6 w-6 text-primary" />
-                 <span className="font-bold text-lg">StreamVerse</span>
+                 <span className="font-bold text-lg">Cineverse</span>
                </Link>
                <div className="flex flex-col space-y-3 pl-6">
                 {renderNavLinks(true)}
