@@ -5,8 +5,8 @@ import {Footer} from '@/components/Footer';
 import {Toaster} from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'StreamVerse',
-  description: 'Stream movies online',
+  title: 'CineVerse',
+  description: 'Discover and Explore Movies with CineVerse',
 };
 
 export default function RootLayout({
